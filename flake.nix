@@ -1,5 +1,5 @@
 {
-  description = "Authentication Microservice development environment";
+  description = "Users Microservice development environment";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -22,7 +22,7 @@
             sqlc
           ];
 
-          buildInputs = [ go-task ];
+          buildInputs = [ ];
         };
       });
 }

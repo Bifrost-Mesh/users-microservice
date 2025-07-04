@@ -1,0 +1,9 @@
+devMode: True
+debugLogging: True
+
+serverPort: 4000
+
+jwtSigningKey: XHwjzpbA3d32UGYT
+
+postgres:
+  url: postgres://default:XHwjzpbA3d32UGYT@localhost:5432/instagram_clone?sslmode=disable

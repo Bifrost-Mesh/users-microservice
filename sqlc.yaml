@@ -1,0 +1,14 @@
+version: "2"
+sql:
+  - engine: postgresql
+    schema: sql/schema.sql
+    queries: sql/queries.sql
+    gen:
+      go:
+        sql_package: "database/sql"
+        out: sql/generated
+        package: generated
+        emit_interface: true
+        emit_params_struct_pointers: true
+        emit_result_struct_pointers: true
+        emit_pointers_for_null_types: true
