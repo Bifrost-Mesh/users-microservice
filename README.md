@@ -45,3 +45,15 @@ However I'm not doing it in the CI, since a lot of false positives are reported.
 **Security** :
 
 - [How to Correctly Validate Passwords - Most Websites Do It Wrong](https://blog.boot.dev/open-source/how-to-validate-passwords/)
+
+**CI** :
+
+- [Optimize cache usage in builds](https://docs.docker.com/build/cache/optimize/)
+
+- [The OpenContainers Annotations Spec](https://specs.opencontainers.org/image-spec/annotations/)
+
+- [Cosign tutorial - signing OCI artifacts](https://github.com/avisi-cloud/cosign-tutorial)
+
+- [Streamline your GitHub Actions dependencies using Nix](https://determinate.systems/posts/nix-github-actions/)
+
+- [Kubescape PR scanner Github Actions workflow](https://github.com/kubescape/kubescape/blob/master/.github/workflows/a-pr-scanner.yaml)

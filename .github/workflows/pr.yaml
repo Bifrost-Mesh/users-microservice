@@ -1,0 +1,149 @@
+name: pr
+
+# This Github Action workflow is triggered, if a Pull Request (PR) against the main branch is
+# opened / edited.
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+    branches:
+      - main
+
+  # Adding this allows us to trigger this workflow manually (Just for debugging purposes).
+  workflow_dispatch: {}
+
+jobs:
+  run_tests:
+    name: Running tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Run lint tests
+        run: |
+          nix develop --command \
+            golangci-lint run ./...
+
+  scan_sourcecode:
+    name: Scanning sourcecode to find vulberabilities, misconfigurations and exposed secrets
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create outputs directory
+        run: mkdir -p /tmp/trivy
+
+      - name: Run Trivy security scan against the sourcecode
+        id: security-scan
+        uses: aquasecurity/trivy-action@0.32.0
+        with:
+          scan-type: fs
+          vuln-type: library
+          scan-ref: .
+          trivy-config: trivy.yaml
+          format: table
+          output: security-scan-result.txt
+
+      - name: Append the security scan result to the job summary
+        run: |
+          {
+            echo "### 🛡️ Sourcecode security scan result :"
+            echo ""
+            echo '```terraform'
+            cat security-scan-result.txt
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
+
+  build_push_sign_and_scan_container_images:
+    name: Build, push, sign and scan container images
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: bifrost-mesh
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup GoLang modules cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            /go/pkg/mod
+          key: users-microservice-${{ hashFiles('./go.mod') }}
+
+      - name: Build and push AMD64 container image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: build/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/bifrost-mesh/users-microservice:${{ github.sha }}
+          # Experimental cache exporter for GitHub Actions provided by buildx and BuildKit.
+          # It uses the GitHub Cache API to fetch and load the Docker layer cache blobs across
+          # builds.
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Cosign is a command line utility that can sign and verify software artifact, such as
+      # container images and blobs.
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+        with:
+          cosign-release: v2.5.2
+
+      - name: Sign the published container image
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+        run: |
+          cosign sign --key env://COSIGN_PRIVATE_KEY \
+            ghcr.io/bifrost-mesh/users-microservice:${{ github.sha }} -y
+
+      - name: Create outputs directory
+        if: steps.path-filter.outputs.changed == 'true'
+        run: mkdir -p /tmp/trivy
+
+      - name: Run Trivy security scan against the container image
+        id: security-scan
+        uses: aquasecurity/trivy-action@0.32.0
+        with:
+          scan-type: image
+          vuln-type: os
+          image-ref: ghcr.io/bifrost-mesh/users-microservice:${{ github.sha }}
+          trivy-config: trivy.yaml
+          format: table
+          output: security-scan-result.txt
+
+      - name: Append the security scan result to the job summary
+        run: |
+          {
+            echo "### 🛡️ Container Image security scan result :"
+            echo ""
+            echo '```terraform'
+            cat security-scan-result.txt
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
