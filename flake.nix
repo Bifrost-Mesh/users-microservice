@@ -14,7 +14,7 @@
           nativeBuildInputs = [
             go_1_24
             golangci-lint
-            golines
+            nilaway
 
             protobuf
             buf

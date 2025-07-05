@@ -5,12 +5,13 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
+
 	"github.com/Bifrost-Mesh/users-microservice/pkg/connectors"
 	"github.com/Bifrost-Mesh/users-microservice/pkg/constants"
 	"github.com/Bifrost-Mesh/users-microservice/pkg/utils"
 	"github.com/Bifrost-Mesh/users-microservice/sql/generated"
-	"github.com/jackc/pgerrcode"
-	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type UsersPostgresRepository struct {

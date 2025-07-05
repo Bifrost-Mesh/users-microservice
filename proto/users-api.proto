@@ -30,6 +30,5 @@ message SigninRequest {
 }
 
 message SigninResponse {
-  int32  user_id = 1;
-  string jwt     = 2;
+  string jwt = 1;
 }

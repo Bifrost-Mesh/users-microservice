@@ -9,7 +9,10 @@ import (
 )
 
 // Panics if the given error isn't nil.
-func AssertErrNil(ctx context.Context, err error, contextualErrorMessage string, attributes ...any) {
+func AssertErrNil(ctx context.Context, err error,
+	contextualErrorMessage string,
+	attributes ...any,
+) {
 	if err == nil {
 		return
 	}

@@ -3,9 +3,10 @@ package users
 import (
 	"context"
 
-	"github.com/Bifrost-Mesh/users-microservice/pkg/core/token"
 	goValidator "github.com/go-playground/validator/v10"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/Bifrost-Mesh/users-microservice/pkg/core/token"
 )
 
 type UsersService struct {

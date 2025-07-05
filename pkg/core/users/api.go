@@ -3,9 +3,10 @@ package users
 import (
 	"context"
 
-	"github.com/Bifrost-Mesh/users-microservice/proto/generated"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"google.golang.org/protobuf/types/known/emptypb"
+
+	"github.com/Bifrost-Mesh/users-microservice/proto/generated"
 )
 
 type UsersAPI struct {
@@ -15,6 +16,7 @@ type UsersAPI struct {
 }
 
 func NewUsersAPI(usersService *UsersService) *UsersAPI {
+	//nolint:exhaustruct
 	return &UsersAPI{
 		usersService: usersService,
 	}
@@ -28,10 +30,10 @@ func (u *UsersAPI) Signup(ctx context.Context,
 	request *generated.SignupRequest,
 ) (*generated.SigninResponse, error) {
 	output, err := u.usersService.Signup(ctx, &SignupArgs{
-		Name:     request.Name,
-		Email:    request.Email,
-		Username: request.Username,
-		Password: request.Password,
+		Name:     request.GetName(),
+		Email:    request.GetEmail(),
+		Username: request.GetUsername(),
+		Password: request.GetPassword(),
 	})
 	if err != nil {
 		return nil, err
@@ -46,10 +48,11 @@ func (u *UsersAPI) Signup(ctx context.Context,
 func (u *UsersAPI) Signin(ctx context.Context,
 	request *generated.SigninRequest,
 ) (*generated.SigninResponse, error) {
+	//nolint:exhaustruct
 	args := &SigninArgs{
-		Password: request.Password,
+		Password: request.GetPassword(),
 	}
-	switch request.Identifier.(type) {
+	switch request.GetIdentifier().(type) {
 	case *generated.SigninRequest_Email:
 		args.Email = aws.String(request.GetEmail())
 

@@ -4,12 +4,13 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/Bifrost-Mesh/users-microservice/pkg/logger"
-	"github.com/Bifrost-Mesh/users-microservice/pkg/utils"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/Bifrost-Mesh/users-microservice/pkg/logger"
+	"github.com/Bifrost-Mesh/users-microservice/pkg/utils"
 )
 
 // Returns a gRPC request logger (which under the hood invokes slog).

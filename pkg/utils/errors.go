@@ -13,6 +13,7 @@ When the presentation layer (in this case, gRPC server) gets :
 	    The gRPC error status code can be decided based on the concrete error type (like
 	    ErrUserNotFound).
 
+
 	(2) any other type of (unexpected) error, it logs that error and sends the ErrInternalServer back
 	    to the client.
 	    The gRPC error status code will always be codes.Internal.
@@ -21,6 +22,7 @@ type APIError error
 
 // Returns an APIError, constructed using the given error message.
 func NewAPIError(message string) APIError {
+	//nolint:errcheck
 	return errors.New(message).(APIError)
 }
 

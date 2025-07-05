@@ -5,10 +5,11 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/Bifrost-Mesh/users-microservice/pkg/assert"
 	"github.com/go-playground/validator/v10"
 	"github.com/mcuadros/go-defaults"
 	"gopkg.in/yaml.v3"
+
+	"github.com/Bifrost-Mesh/users-microservice/pkg/assert"
 )
 
 // Parses and validates the config file at the given path.
@@ -19,6 +20,7 @@ func MustParseConfigFile(ctx context.Context,
 	configFilePath string,
 	validator *validator.Validate,
 ) *Config {
+	//nolint:gosec
 	configFileContents, err := os.ReadFile(configFilePath)
 	assert.AssertErrNil(ctx, err, "Failed reading config file", slog.String("path", configFilePath))
 

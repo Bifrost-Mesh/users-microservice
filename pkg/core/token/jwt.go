@@ -5,10 +5,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Bifrost-Mesh/users-microservice/pkg/constants"
-	"github.com/Bifrost-Mesh/users-microservice/pkg/utils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	goJWT "github.com/golang-jwt/jwt/v5"
+
+	"github.com/Bifrost-Mesh/users-microservice/pkg/constants"
+	"github.com/Bifrost-Mesh/users-microservice/pkg/utils"
 )
 
 const JWT_VALIDITIY_PERIOD = 24 * time.Hour
@@ -47,6 +48,7 @@ func NewJWTService(signingKey string) *JWTService {
 
 func (j *JWTService) Issue(userID int32) (*string, error) {
 	jwtSigner := goJWT.NewWithClaims(goJWT.SigningMethodHS256, JWTClaims{
+		//nolint:exhaustruct
 		RegisteredClaims: goJWT.RegisteredClaims{
 			Issuer:    "Instagram Clone",
 			Subject:   strconv.Itoa(int(userID)),

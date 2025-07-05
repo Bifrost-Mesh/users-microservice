@@ -2,7 +2,7 @@ package config
 
 type (
 	Config struct {
-		DevMode      bool `yaml:"devMode" default:"False"`
+		DevMode      bool `yaml:"devMode"      default:"False"`
 		DebugLogging bool `yaml:"debugLogging" default:"False"`
 
 		ServerPort int `yaml:"serverPort" default:"4000" validate:"gt=0"`

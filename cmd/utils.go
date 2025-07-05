@@ -1,9 +1,10 @@
 package main
 
 import (
+	"google.golang.org/grpc/codes"
+
 	"github.com/Bifrost-Mesh/users-microservice/pkg/constants"
 	"github.com/Bifrost-Mesh/users-microservice/pkg/utils"
-	"google.golang.org/grpc/codes"
 )
 
 // Returns suitable gRPC error status code, based on the given error.

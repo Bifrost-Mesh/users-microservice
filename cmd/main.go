@@ -9,6 +9,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/go-playground/validator/v10"
+	"golang.org/x/sync/errgroup"
+
 	"github.com/Bifrost-Mesh/users-microservice/pkg/config"
 	"github.com/Bifrost-Mesh/users-microservice/pkg/connectors"
 	"github.com/Bifrost-Mesh/users-microservice/pkg/constants"
@@ -19,28 +22,17 @@ import (
 	"github.com/Bifrost-Mesh/users-microservice/pkg/logger"
 	"github.com/Bifrost-Mesh/users-microservice/pkg/utils"
 	"github.com/Bifrost-Mesh/users-microservice/proto/generated"
-	"github.com/go-playground/validator/v10"
-	"golang.org/x/sync/errgroup"
 )
 
 var configFilePath string
 
 func main() {
-	// When the program receives any interruption / SIGKILL / SIGTERM signal, the cancel function is
-	// automatically invoked. The cancel function is responsible for freeing all the resources
-	// associated with the context.
-	ctx, cancel := signal.NotifyContext(context.Background(),
-		syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT,
-	)
-	defer cancel()
-
-	validator := utils.NewValidator(ctx)
-
 	// Get CLI flag values.
 	{
 		flagSet := flag.NewFlagSet("", flag.ExitOnError)
 
-		flagSet.StringVar(&configFilePath, constants.FLAG_CONFIG_FILE, constants.FLAG_CONFIG_FILE_DEFAULT,
+		flagSet.StringVar(&configFilePath,
+			constants.FLAG_CONFIG_FILE, constants.FLAG_CONFIG_FILE_DEFAULT,
 			"Config file path",
 		)
 
@@ -52,6 +44,16 @@ func main() {
 			os.Exit(1)
 		}
 	}
+
+	// When the program receives any interruption / SIGKILL / SIGTERM signal, the cancel function is
+	// automatically invoked. The cancel function is responsible for freeing all the resources
+	// associated with the context.
+	ctx, cancel := signal.NotifyContext(context.Background(),
+		syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT,
+	)
+
+	// Construct validator with custom validators.
+	validator := utils.NewValidator(ctx)
 
 	// Get config.
 	config := config.MustParseConfigFile(ctx, configFilePath, validator)

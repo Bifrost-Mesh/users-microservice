@@ -4,9 +4,10 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/Bifrost-Mesh/users-microservice/pkg/assert"
 	goValidator "github.com/go-playground/validator/v10"
 	goNonStandardValidtors "github.com/go-playground/validator/v10/non-standard/validators"
+
+	"github.com/Bifrost-Mesh/users-microservice/pkg/assert"
 )
 
 func NewValidator(ctx context.Context) *goValidator.Validate {
@@ -37,6 +38,9 @@ func RegisterCustomFieldValidators(
 
 	for id, customFieldValidator := range customFieldValidators {
 		err := validator.RegisterValidation(id, customFieldValidator, false)
-		assert.AssertErrNil(ctx, err, "Failed registering custom field validator", slog.String("id", id))
+		assert.AssertErrNil(ctx, err,
+			"Failed registering custom field validator",
+			slog.String("id", id),
+		)
 	}
 }

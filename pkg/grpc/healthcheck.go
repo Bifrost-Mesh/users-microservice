@@ -3,11 +3,12 @@ package grpc
 import (
 	"context"
 
-	"github.com/Bifrost-Mesh/users-microservice/pkg/healthcheck"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
+
+	"github.com/Bifrost-Mesh/users-microservice/pkg/healthcheck"
 )
 
 type HealthcheckService struct {
@@ -17,7 +18,9 @@ type HealthcheckService struct {
 func (h *HealthcheckService) Check(ctx context.Context,
 	request *grpc_health_v1.HealthCheckRequest,
 ) (*grpc_health_v1.HealthCheckResponse, error) {
-	response := &grpc_health_v1.HealthCheckResponse{}
+	response := &grpc_health_v1.HealthCheckResponse{
+		Status: grpc_health_v1.HealthCheckResponse_UNKNOWN,
+	}
 
 	err := healthcheck.Healthcheck(h.healthcheckables)
 	if err != nil {
@@ -25,6 +28,7 @@ func (h *HealthcheckService) Check(ctx context.Context,
 		return response, err
 	}
 
+	response.Status = grpc_health_v1.HealthCheckResponse_SERVING
 	return response, nil
 }
 

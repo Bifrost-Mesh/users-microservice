@@ -14,11 +14,13 @@ func SetupLogger(debugLoggingEnabled, devModeEnabled bool) {
 		logLevel = slog.LevelDebug
 	}
 
+	//nolint:exhaustruct
 	var formatHandler slog.Handler = slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{
 		Level:       logLevel,
 		ReplaceAttr: replaceSlogAttr,
 	})
 	if devModeEnabled {
+		//nolint:exhaustruct
 		formatHandler = tint.NewHandler(os.Stderr, &tint.Options{
 			Level:       logLevel,
 			ReplaceAttr: replaceSlogAttr,

@@ -7,10 +7,6 @@ import (
 	"net"
 
 	"buf.build/go/protovalidate"
-	"github.com/Bifrost-Mesh/users-microservice/pkg/assert"
-	"github.com/Bifrost-Mesh/users-microservice/pkg/healthcheck"
-	"github.com/Bifrost-Mesh/users-microservice/pkg/logger"
-	"github.com/Bifrost-Mesh/users-microservice/pkg/utils"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	gRPCProtovalidateMiddleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
 	"github.com/prometheus/client_golang/prometheus"
@@ -19,6 +15,11 @@ import (
 	"google.golang.org/grpc/codes"
 	_ "google.golang.org/grpc/encoding/gzip"
 	"google.golang.org/grpc/health/grpc_health_v1"
+
+	"github.com/Bifrost-Mesh/users-microservice/pkg/assert"
+	"github.com/Bifrost-Mesh/users-microservice/pkg/healthcheck"
+	"github.com/Bifrost-Mesh/users-microservice/pkg/logger"
+	"github.com/Bifrost-Mesh/users-microservice/pkg/utils"
 
 	"google.golang.org/grpc/reflection"
 
